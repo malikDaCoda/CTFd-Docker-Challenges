@@ -47,6 +47,8 @@ from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.utils.config import get_themes
 
+from CTFd.plugins.docker_challenges.config import MEMORY_LIMIT, NANO_CPUS_QUOTA
+
 
 class DockerConfig(db.Model):
     """
@@ -330,7 +332,7 @@ def create_container(docker, image, team, portbl):
         ports[i] = {}
         bindings[i] = [{"HostPort": tmp_ports.pop()}]
     headers = {'Content-Type': "application/json"}
-    data = json.dumps({"Image": image, "ExposedPorts": ports, "HostConfig": {"PortBindings": bindings}})
+    data = json.dumps({"Image": image, "ExposedPorts": ports, "HostConfig": {"PortBindings": bindings, "Memory": MEMORY_LIMIT, "NanoCpus": NANO_CPUS_QUOTA}})
     if tls:
         r = requests.post(url="%s/containers/create?name=%s" % (URL_TEMPLATE, container_name), cert=CERT,
                       verify=False, data=data, headers=headers)

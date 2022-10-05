@@ -1,3 +1,5 @@
+INST_PORT_PLACEHOLDER = "${INSTANCE_PORT}"
+
 CTFd._internal.challenge.data = undefined
 
 CTFd._internal.challenge.renderer = CTFd.lib.markdown();
@@ -45,6 +47,10 @@ function get_docker_status(container) {
         $.each(result['data'], function(i, item) {
             if (item.docker_image == container) {
                 var ports = String(item.ports).split(',');
+                // Update connection info
+                if (ports.length > 0) {
+                    $('.challenge-connection-info code').text((index, text) => text.replace(INST_PORT_PLACEHOLDER, String(ports[0])));
+                }
                 var data = '';
                 $.each(ports, function(x, port) {
                     port = String(port)
