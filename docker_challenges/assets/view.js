@@ -1,4 +1,5 @@
-INST_PORT_PLACEHOLDER = "${INSTANCE_PORT}"
+const INST_PORT_PLACEHOLDER = "${INSTANCE_PORT}"
+let connection_info = null
 
 CTFd._internal.challenge.data = undefined
 
@@ -46,11 +47,11 @@ function get_docker_status(container) {
     $.get("/api/v1/docker_status", function(result) {
         $.each(result['data'], function(i, item) {
             if (item.docker_image == container) {
-                var ports = String(item.ports).split(',');
+                var ports = String(item.ports).split(',')
                 // Update connection info
                 if (ports.length > 0) {
-                    port = String(ports[0]).split('/')[0];
-                    $('.challenge-connection-info code').text((index, text) => text.replace(INST_PORT_PLACEHOLDER, port));
+                    port = String(ports[0]).split('/')[0]
+                    $('.challenge-connection-info code').text((index, text) => text.replace(INST_PORT_PLACEHOLDER, port))
                 }
                 var data = '';
                 $.each(ports, function(x, port) {
@@ -80,6 +81,11 @@ function get_docker_status(container) {
 };
 
 function start_container(container) {
+    if (connection_info === null) {
+        connection_info = $('.challenge-connection-info code').text()
+    } else {
+        $('.challenge-connection-info code').text(connection_info)
+    }
     $('#docker_container').html('<div class="text-center"><i class="fas fa-circle-notch fa-spin fa-1x"></i></div>');
     $.get("/api/v1/container", { 'name': container }, function(result) {
             get_docker_status(container);
