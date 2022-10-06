@@ -49,7 +49,8 @@ function get_docker_status(container) {
                 var ports = String(item.ports).split(',');
                 // Update connection info
                 if (ports.length > 0) {
-                    $('.challenge-connection-info code').text((index, text) => text.replace(INST_PORT_PLACEHOLDER, String(ports[0])));
+                    port = String(ports[0]).split('/')[0];
+                    $('.challenge-connection-info code').text((index, text) => text.replace(INST_PORT_PLACEHOLDER, port));
                 }
                 var data = '';
                 $.each(ports, function(x, port) {
