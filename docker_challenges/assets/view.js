@@ -89,7 +89,7 @@ function start_container(container) {
     } else {
         $('.challenge-connection-info code').text(connection_info)
     }
-    $('#docker_container').html('<div class="text-center"><span>Creating instance...</span><i class="fas fa-circle-notch fa-spin fa-1x"></i></div>');
+    $('#docker_container').html('<div class="text-center"><span>Creating instance... (this can take up to 1 minute)</span><br><i class="fas fa-circle-notch fa-spin fa-1x"></i></div>');
     $.get("/api/v1/container", { 'name': container }, function(result) {
             get_docker_status(container);
         })
