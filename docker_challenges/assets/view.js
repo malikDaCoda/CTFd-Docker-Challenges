@@ -1,4 +1,5 @@
 const INST_PORT_PLACEHOLDER = "${INSTANCE_PORT}"
+const DELAY_SECONDS = 30
 let connection_info = null
 
 CTFd._internal.challenge.data = undefined
@@ -58,23 +59,25 @@ function get_docker_status(container) {
                     port = String(port)
                     data = data + 'Host: ' + item.host + ' Port: ' + port + '<br />';
                 })
-                $('#docker_container').html('<pre>Docker Container Information:<br />' + data + '<div class="mt-2" id="' + String(item.instance_id).substring(0,10) + '_revert_container"></div>');
-                var countDownDate = new Date(parseInt(item.revert_time) * 1000).getTime();
-                var x = setInterval(function() {
-                    var now = new Date().getTime();
-                    var distance = countDownDate - now;
-                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                    if (seconds < 10) {
-                        seconds = "0" + seconds
-                    }
-                    $("#" + String(item.instance_id).substring(0,10) + "_revert_container").html('Next Revert Available in ' + minutes + ':' + seconds);
-                    if (distance < 0) {
-                        clearInterval(x);
-                        $("#" + String(item.instance_id).substring(0,10) + "_revert_container").html('<a onclick="start_container(\'' + item.docker_image + '\');" class=\'btn btn-dark\'><small style=\'color:white;\'><i class="fas fa-redo"></i> Revert</small></a>');
-                    }
-                }, 1000);
-                return false;
+                new Promise(resolve => setTimeout(resolve, DELAY_SECONDS)).then(() => {
+                    $('#docker_container').html('<pre>Docker Container Information:<br />' + data + '<div class="mt-2" id="' + String(item.instance_id).substring(0,10) + '_revert_container"></div>');
+                    var countDownDate = new Date(parseInt(item.revert_time) * 1000).getTime();
+                    var x = setInterval(function() {
+                        var now = new Date().getTime();
+                        var distance = countDownDate - now;
+                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        if (seconds < 10) {
+                            seconds = "0" + seconds
+                        }
+                        $("#" + String(item.instance_id).substring(0,10) + "_revert_container").html('Next Revert Available in ' + minutes + ':' + seconds);
+                        if (distance < 0) {
+                            clearInterval(x);
+                            $("#" + String(item.instance_id).substring(0,10) + "_revert_container").html('<a onclick="start_container(\'' + item.docker_image + '\');" class=\'btn btn-dark\'><small style=\'color:white;\'><i class="fas fa-redo"></i> Revert</small></a>');
+                        }
+                    }, 1000);
+                    return false;
+                })
             };
         });
     });

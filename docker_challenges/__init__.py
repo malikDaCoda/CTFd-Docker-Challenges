@@ -336,7 +336,11 @@ def create_container(docker, image, team, portbl):
     if tls:
         r = requests.post(url="%s/containers/create?name=%s" % (URL_TEMPLATE, container_name), cert=CERT,
                       verify=False, data=data, headers=headers)
+        print("-" * 30)
+        print(r.request.method, r.request.url, r.request.body)
         result = r.json()
+        print(result)
+        print("-" * 30)
         s = requests.post(url="%s/containers/%s/start" % (URL_TEMPLATE, result['Id']), cert=CERT, verify=False,
                           headers=headers)
     else:
